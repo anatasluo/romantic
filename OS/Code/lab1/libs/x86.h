@@ -24,6 +24,8 @@ static inline void outb(uint16_t port, uint8_t data) __attribute__((always_inlin
 static inline void outw(uint16_t port, uint16_t data) __attribute__((always_inline));
 static inline uint32_t read_ebp(void) __attribute__((always_inline));
 
+static inline uint32_t read_esp(void) __attribute__((always_inline));
+
 /* Pseudo-descriptors used for LGDT, LLDT(not used) and LIDT instructions. */
 struct pseudodesc {
     uint16_t pd_lim;        // Limit
@@ -67,6 +69,13 @@ read_ebp(void) {
     uint32_t ebp;
     asm volatile ("movl %%ebp, %0" : "=r" (ebp));
     return ebp;
+}
+
+static inline uint32_t
+read_esp(void) {
+    uint32_t esp;
+    asm volatile ("movl %%esp, %0" : "=r" (esp));
+    return esp;
 }
 
 static inline void
