@@ -23,7 +23,7 @@
 
 1. [实验1代码](https://github.com/anatasluo/Romantic/tree/master/OS/Code/lab1)
 
-2. [实验1实验报告](https://github.com/anatasluo/Romantic/blob/master/OS/lab1/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98.md)
+2. [实验1实验报告](https://github.com/anatasluo/Romantic/blob/master/OS/Report/lab1/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98.md)
 
 ### 相关链接:
 

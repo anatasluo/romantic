@@ -7,19 +7,19 @@ Special kernel symbols:
   end    0x0010fd80 (phys)
 Kernel executable memory footprint: 64KB
 ebp:0x00007b08 eip:0x00100a83 args: 0x00010094  0x00000000  0x00007b38  0x00100097 
-    kern/debug/kdebug.c:307: print_stackframe+21
+    kern/debug/kdebug.c:309: print_stackframe+21
 ebp:0x00007b18 eip:0x00100d72 args: 0x00000000  0x00000000  0x00000000  0x00007b88 
     kern/debug/kmonitor.c:125: mon_backtrace+10
 ebp:0x00007b38 eip:0x00100097 args: 0x00000000  0x00007b60  0xffff0000  0x00007b64 
-    kern/init/init.c:48: grade_backtrace2+33
+    kern/init/init.c:49: grade_backtrace2+33
 ebp:0x00007b58 eip:0x001000c0 args: 0x00000000  0xffff0000  0x00007b84  0x00000029 
-    kern/init/init.c:53: grade_backtrace1+38
+    kern/init/init.c:54: grade_backtrace1+38
 ebp:0x00007b78 eip:0x001000de args: 0x00000000  0x00100000  0xffff0000  0x0000001d 
-    kern/init/init.c:58: grade_backtrace0+23
+    kern/init/init.c:59: grade_backtrace0+23
 ebp:0x00007b98 eip:0x00100103 args: 0x001035dc  0x001035c0  0x0000136a  0x00000000 
-    kern/init/init.c:63: grade_backtrace+34
+    kern/init/init.c:64: grade_backtrace+34
 ebp:0x00007bc8 eip:0x00100055 args: 0x00000000  0x00000000  0x00000000  0x00010094 
-    kern/init/init.c:28: kern_init+84
+    kern/init/init.c:29: kern_init+84
 ebp:0x00007bf8 eip:0x00007d68 args: 0xc031fcfa  0xc08ed88e  0x64e4d08e  0xfa7502a8 
     <unknow>: -- 0x00007d67 --
 ++ setup timer interrupts
@@ -46,7 +46,7 @@ kernel panic at kern/trap/trap.c:18:
     EOT: kernel seems ok.
 stack trackback:
 ebp:0x00007aa0 eip:0x00100a83 args: 0x00103688  0x00007ae4  0x00000012  0xffffffff 
-    kern/debug/kdebug.c:307: print_stackframe+21
+    kern/debug/kdebug.c:309: print_stackframe+21
 ebp:0x00007ad0 eip:0x0010042d args: 0x0010394e  0x00000012  0x00103938  0x00000000 
     kern/debug/panic.c:27: __panic+105
 ebp:0x00007af0 eip:0x00101846 args: 0x00103627  0x00007b5c  0x00007b20  0x00101e9c 
