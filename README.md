@@ -25,6 +25,18 @@
 
 2. [实验1实验报告](https://github.com/anatasluo/Romantic/blob/master/OS/Report/lab1/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98.md)
 
+### 实验2
+
+1. [实验2代码](https://github.com/anatasluo/Romantic/tree/master/OS/Code/lab2)
+
+2. [实验2实验报告](https://github.com/anatasluo/Romantic/blob/master/OS/Report/lab2/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98.md)
+
+### 实验3
+
+1. [实验3代码](https://github.com/anatasluo/Romantic/tree/master/OS/Code/lab3)
+
+2. [实验3实验报告](https://github.com/anatasluo/Romantic/blob/master/OS/Report/lab3/%E5%AE%9E%E9%AA%8C%E6%8A%A5%E5%91%8A/%E7%AC%94%E8%AE%B0%E5%8F%8A%E8%AF%BE%E5%90%8E%E4%B9%A0%E9%A2%98.md)
+
 ### 相关链接:
 
 1. [实验指导书](https://chyyuu.gitbooks.io/ucore_os_docs/content/)

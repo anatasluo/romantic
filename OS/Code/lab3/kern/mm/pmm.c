@@ -33,7 +33,7 @@
  * */
 static struct taskstate ts = {0};
 
-// virtual address of physicall page array
+// virtual address of physical page array
 struct Page *pages;
 // amount of physical memory (in pages)
 size_t npage = 0;
@@ -224,14 +224,19 @@ page_init(void) {
     extern char end[];
 
     npage = maxpa / PGSIZE;
+
+    // 将地址进行4K对齐
+    // end 为bootloader加载完ucore的地址，以此地址为基础的地址是可以使用的，对齐后作为页表的起始地址
     pages = (struct Page *)ROUNDUP((void *)end, PGSIZE);
 
+    // 设置保留标志位
     for (i = 0; i < npage; i ++) {
         SetPageReserved(pages + i);
     }
 
     uintptr_t freemem = PADDR((uintptr_t)pages + sizeof(struct Page) * npage);
 
+    // 开始对其他页表项进行处理
     for (i = 0; i < memmap->nr_map; i ++) {
         uint64_t begin = memmap->map[i].addr, end = begin + memmap->map[i].size;
         if (memmap->map[i].type == E820_ARM) {
@@ -310,6 +315,8 @@ pmm_init(void) {
 
     // recursively insert boot_pgdir in itself
     // to form a virtual page table at virtual address VPT
+
+    // boot_pgdir 和 VPT 都是PD的虚拟地址，是不同时期的虚拟地址
     boot_pgdir[PDX(VPT)] = PADDR(boot_pgdir) | PTE_P | PTE_W;
 
     // map all physical memory to linear memory with base linear addr KERNBASE
@@ -372,6 +379,22 @@ get_pte(pde_t *pgdir, uintptr_t la, bool create) {
     }
     return NULL;          // (8) return page table entry
 #endif
+    pde_t *pdep = &pgdir[PDX(la)];
+    if(!(*pdep & PTE_P))
+    {
+    	struct Page *page;
+    	if(!create || (page = alloc_page()) == NULL){
+    		return NULL;
+    	}
+    	set_page_ref(page, 1);
+    	// 获得刚申请页的物理地址
+    	uintptr_t pa = page2pa(page);
+    	// 函数所有的地址都是虚拟地址，利用KADDR进行转化
+    	memset(KADDR(pa), 0, PGSIZE);
+    	*pdep = pa | PTE_U | PTE_W | PTE_P;
+    }
+    return &((pte_t *)KADDR(PDE_ADDR(*pdep)))[PTX(la)];
+
 }
 
 //get_page - get related Page struct for linear address la using PDT pgdir
@@ -417,6 +440,18 @@ page_remove_pte(pde_t *pgdir, uintptr_t la, pte_t *ptep) {
                                   //(6) flush tlb
     }
 #endif
+
+    if(*ptep & PTE_P)
+    {
+    	struct Page *page = pte2page(*ptep);
+    	page_ref_dec(page);
+    	if(page->ref == 0)
+    	{
+    		free_page(page);
+    	}
+    	*ptep = 0;
+    	tlb_invalidate(pgdir, la);
+    }
 }
 
 //page_remove - free an Page which is related linear address la and has an validated pte

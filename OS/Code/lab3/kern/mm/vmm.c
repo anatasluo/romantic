@@ -396,6 +396,42 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
         }
    }
 #endif
+
+    if((ptep = get_pte(mm->pgdir, addr, 1)) == NULL)
+    {
+    	cprintf("get_pte error in do_pgfault!\n");
+    	goto failed;
+    }
+
+    /*
+     * 根据获得的ptep进行中断处理，包含以下情况
+     * 1. ptep为0，说明第一次分配，映射关系还未建立。
+     * 2.1 ptep不为0, 且存在位为1, 说明正常, 该种情况在中断中不会产生。
+     * 2.2 ptep不为0, 且存在位为0, 应该去磁盘获取。
+     */
+    if(*ptep == 0)
+    {
+    	if(pgdir_alloc_page(mm->pgdir, addr, perm) == NULL)
+    	{
+    		cprintf("pgdir_alloc_page error in do_pgfault!\n");
+    		goto failed;
+    	}
+    }else{
+    	if(swap_init_ok) {
+    		struct Page *page=NULL;
+    		if((ret = swap_in(mm, addr, &page)) != 0)
+    		{
+    			cprintf("swap_in error in do_pgfault!\n");
+    			goto failed;
+    		}
+    		page_insert(mm->pgdir, page, addr, perm);
+    		swap_map_swappable(mm, addr, page, 1);
+    		page->pra_vaddr = addr;
+    	}else{
+    		cprintf("no swap_init_ok but ptep is %x, failed\n",*ptep);
+    		goto failed;
+    	}
+    }
    ret = 0;
 failed:
     return ret;
