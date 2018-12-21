@@ -128,6 +128,7 @@ typedef struct {
     unsigned int nr_free;           // # of free pages in this free list
 } free_area_t;
 
+
 #endif /* !__ASSEMBLER__ */
 
 #endif /* !__KERN_MM_MEMLAYOUT_H__ */
