@@ -94,11 +94,25 @@ lab1_print_cur_status(void) {
 static void
 lab1_switch_to_user(void) {
     //LAB1 CHALLENGE 1 : TODO
+	asm volatile (
+		"sub $0x8, %%esp \n"   // 切换到内核态时， CPU压入5个参数， 切换到用户态时， CPU压入3个参数，此处是为了摸平这一差异，便于存放完整的trapfram
+		"int %0 \n"
+		"movl %%ebp, %%esp \n"  // 此处的作用，是为了跟后面的汇编一起发挥leave作用
+		:
+		: "i"(T_SWITCH_TOU)
+	);
 }
 
 static void
 lab1_switch_to_kernel(void) {
     //LAB1 CHALLENGE 1 :  TODO
+	asm volatile (
+		"int %0 \n"
+		"movl %%ebp, %%esp \n"  // 此处的作用，是为了跟后面的汇编一起发挥leave作用
+		:
+		: "i"(T_SWITCH_TOK)
+	);
+
 }
 
 static void

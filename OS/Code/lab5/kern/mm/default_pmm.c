@@ -98,6 +98,7 @@ free_area_t free_area;
 #define free_list (free_area.free_list)
 #define nr_free (free_area.nr_free)
 
+// 主要是一些参数的初始化工作
 static void
 default_init(void) {
     list_init(&free_list);
@@ -116,7 +117,7 @@ default_init_memmap(struct Page *base, size_t n) {
     base->property = n;
     SetPageProperty(base);
     nr_free += n;
-    list_add(&free_list, &(base->page_link));
+    list_add_before(&free_list, &(base->page_link));
 }
 
 static struct Page *
@@ -127,6 +128,7 @@ default_alloc_pages(size_t n) {
     }
     struct Page *page = NULL;
     list_entry_t *le = &free_list;
+    // TODO: optimize (next-fit)
     while ((le = list_next(le)) != &free_list) {
         struct Page *p = le2page(le, page_link);
         if (p->property >= n) {
@@ -134,13 +136,16 @@ default_alloc_pages(size_t n) {
             break;
         }
     }
+
+    // 每一页的属性都在特定地址存储，因此在将空闲页块进行重新链接时，不能复用原有的位置
     if (page != NULL) {
-        list_del(&(page->page_link));
         if (page->property > n) {
             struct Page *p = page + n;
             p->property = page->property - n;
-            list_add(&free_list, &(p->page_link));
-    }
+            SetPageProperty(p);
+            list_add_after(&(page->page_link), &(p->page_link));
+        }
+        list_del(&(page->page_link));
         nr_free -= n;
         ClearPageProperty(page);
     }
@@ -162,6 +167,7 @@ default_free_pages(struct Page *base, size_t n) {
     while (le != &free_list) {
         p = le2page(le, page_link);
         le = list_next(le);
+        // TODO: optimize
         if (base + base->property == p) {
             base->property += p->property;
             ClearPageProperty(p);
@@ -175,7 +181,16 @@ default_free_pages(struct Page *base, size_t n) {
         }
     }
     nr_free += n;
-    list_add(&free_list, &(base->page_link));
+    le = list_next(&free_list);
+    while (le != &free_list) {
+        p = le2page(le, page_link);
+        if (base + base->property <= p) {
+            assert(base + base->property != p);
+            break;
+        }
+        le = list_next(le);
+    }
+    list_add_before(le, &(base->page_link));
 }
 
 static size_t
@@ -308,4 +323,3 @@ const struct pmm_manager default_pmm_manager = {
     .nr_free_pages = default_nr_free_pages,
     .check = default_check,
 };
-

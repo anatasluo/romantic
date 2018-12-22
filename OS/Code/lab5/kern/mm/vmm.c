@@ -493,6 +493,53 @@ do_pgfault(struct mm_struct *mm, uint32_t error_code, uintptr_t addr) {
         }
    }
 #endif
+     /*
+     * 根据获得的ptep进行中断处理，包含以下情况
+     * 1. ptep为0，说明第一次分配，映射关系还未建立。
+     * 2.1 ptep不为0, 且存在位为1, 说明正常, 该种情况在中断中不会产生。
+     * 2.2 ptep不为0, 且存在位为0, 应该去磁盘获取。
+     */
+    // try to find a pte, if pte's PT(Page Table) isn't existed, then create a PT.
+    // (notice the 3th parameter '1')
+    if ((ptep = get_pte(mm->pgdir, addr, 1)) == NULL) {
+        cprintf("get_pte in do_pgfault failed\n");
+        goto failed;
+    }
+    
+    if (*ptep == 0) { // if the phy addr isn't exist, then alloc a page & map the phy addr with logical addr
+        if (pgdir_alloc_page(mm->pgdir, addr, perm) == NULL) {
+            cprintf("pgdir_alloc_page in do_pgfault failed\n");
+            goto failed;
+        }
+    }
+    else {
+        struct Page *page=NULL;
+        cprintf("do pgfault: ptep %x, pte %x\n",ptep, *ptep);
+        if (*ptep & PTE_P) {
+            //if process write to this existed readonly page (PTE_P means existed), then should be here now.
+            //we can implement the delayed memory space copy for fork child process (AKA copy on write, COW).
+            //we didn't implement now, we will do it in future.
+            panic("error write a non-writable pte");
+            //page = pte2page(*ptep);
+        } else{
+           // if this pte is a swap entry, then load data from disk to a page with phy addr
+           // and call page_insert to map the phy addr with logical addr
+           if(swap_init_ok) {               
+               if ((ret = swap_in(mm, addr, &page)) != 0) {
+                   cprintf("swap_in in do_pgfault failed\n");
+                   goto failed;
+               }    
+
+           }  
+           else {
+            cprintf("no swap_init_ok but ptep is %x, failed\n",*ptep);
+            goto failed;
+           }
+       } 
+       page_insert(mm->pgdir, page, addr, perm);
+       swap_map_swappable(mm, addr, page, 1);
+       page->pra_vaddr = addr;
+   }
    ret = 0;
 failed:
     return ret;
