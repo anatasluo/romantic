@@ -2,7 +2,7 @@
 
 Special kernel symbols:
   entry  0xc0100036 (phys)
-  etext  0xc010c52c (phys)
+  etext  0xc010c5ab (phys)
   edata  0xc01b0000 (phys)
   end    0xc01b31cc (phys)
 Kernel executable memory footprint: 717KB
@@ -16,9 +16,9 @@ ebp:0xc012bf88 eip:0xc010010d args:0x00000000 0xffff0000 0xc012bfb4 0x0000002a
     kern/init/init.c:64: grade_backtrace1+38
 ebp:0xc012bfa8 eip:0xc010012b args:0x00000000 0xc0100036 0xffff0000 0x0000001d 
     kern/init/init.c:69: grade_backtrace0+23
-ebp:0xc012bfc8 eip:0xc0100150 args:0xc010c55c 0xc010c540 0x000031cc 0x00000000 
+ebp:0xc012bfc8 eip:0xc0100150 args:0xc010c5dc 0xc010c5c0 0x000031cc 0x00000000 
     kern/init/init.c:74: grade_backtrace+34
-ebp:0xc012bff8 eip:0xc010008b args:0xc010c73c 0xc010c744 0xc0100e3d 0xc010c763 
+ebp:0xc012bff8 eip:0xc010008b args:0xc010c7bc 0xc010c7c4 0xc0100e3d 0xc010c7e3 
     kern/init/init.c:33: kern_init+84
 memory management: default_pmm_manager
 e820map:
@@ -109,16 +109,15 @@ All done in process 2.
 yield pass.
 all user-mode processes have quit.
 init check memory pass.
-kernel panic at kern/process/proc.c:463:
+kernel panic at kern/process/proc.c:469:
     initproc exit.
 
 stack trackback:
-ebp:0xc0395f88 eip:0xc0100bc8 args:0xc010c608 0xc0395fcc 0x000001cf 0xc0395fb8 
+ebp:0xc0395f88 eip:0xc0100bc8 args:0xc010c688 0xc0395fcc 0x000001d5 0xc0395fb8 
     kern/debug/kdebug.c:351: print_stackframe+21
-ebp:0xc0395fb8 eip:0xc010047a args:0xc010e64c 0x000001cf 0xc010e69e 0x00000000 
+ebp:0xc0395fb8 eip:0xc010047a args:0xc010e6cc 0x000001d5 0xc010e71e 0x00000000 
     kern/debug/panic.c:27: __panic+105
-ebp:0xc0395fe8 eip:0xc010a1b9 args:0x00000000 0x00000000 0x00000000 0x00000010 
-    kern/process/proc.c:463: do_exit+91
+ebp:0xc0395fe8 eip:0xc010a238 args:0x00000000 0x00000000 0x00000000 0x00000010 
+    kern/process/proc.c:469: do_exit+91
 Welcome to the kernel debug monitor!!
 Type 'help' for a list of commands.
-K> 

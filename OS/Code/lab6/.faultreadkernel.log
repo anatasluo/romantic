@@ -2,7 +2,7 @@
 
 Special kernel symbols:
   entry  0xc0100036 (phys)
-  etext  0xc010c52c (phys)
+  etext  0xc010c5ab (phys)
   edata  0xc01b0000 (phys)
   end    0xc01b31cc (phys)
 Kernel executable memory footprint: 717KB
@@ -16,9 +16,9 @@ ebp:0xc012bf88 eip:0xc010010d args:0x00000000 0xffff0000 0xc012bfb4 0x0000002a
     kern/init/init.c:64: grade_backtrace1+38
 ebp:0xc012bfa8 eip:0xc010012b args:0x00000000 0xc0100036 0xffff0000 0x0000001d 
     kern/init/init.c:69: grade_backtrace0+23
-ebp:0xc012bfc8 eip:0xc0100150 args:0xc010c55c 0xc010c540 0x000031cc 0x00000000 
+ebp:0xc012bfc8 eip:0xc0100150 args:0xc010c5dc 0xc010c5c0 0x000031cc 0x00000000 
     kern/init/init.c:74: grade_backtrace+34
-ebp:0xc012bff8 eip:0xc010008b args:0xc010c73c 0xc010c744 0xc0100e3d 0xc010c763 
+ebp:0xc012bff8 eip:0xc010008b args:0xc010c7bc 0xc010c7c4 0xc0100e3d 0xc010c7e3 
     kern/init/init.c:33: kern_init+84
 memory management: default_pmm_manager
 e820map:
@@ -125,9 +125,9 @@ kernel panic at kern/trap/trap.c:226:
     handle user mode pgfault failed. ret=-3
 
 stack trackback:
-ebp:0xc039cf08 eip:0xc0100bc8 args:0xc010c608 0xc039cf4c 0x000000e2 0xc039cf50 
+ebp:0xc039cf08 eip:0xc0100bc8 args:0xc010c688 0xc039cf4c 0x000000e2 0xc039cf50 
     kern/debug/kdebug.c:351: print_stackframe+21
-ebp:0xc039cf38 eip:0xc010047a args:0xc010c9ce 0x000000e2 0xc010cc70 0xfffffffd 
+ebp:0xc039cf38 eip:0xc010047a args:0xc010ca4e 0x000000e2 0xc010ccf0 0xfffffffd 
     kern/debug/panic.c:27: __panic+105
 ebp:0xc039cf78 eip:0xc0102980 args:0xc039cfb4 0x00000000 0x008002ba 0x0000001b 
     kern/trap/trap.c:226: trap_dispatch+292
