@@ -555,6 +555,8 @@ sfs_io_nolock(struct sfs_fs *sfs, struct sfs_inode *sin, void *buf, off_t offset
     assert(din->type != SFS_TYPE_DIR);
     off_t endpos = offset + *alenp, blkoff;
     *alenp = 0;
+
+    // 处理一些特殊情况
 	// calculate the Rd/Wr end position
     if (offset < 0 || offset >= SFS_MAX_FILE_SIZE || offset > endpos) {
         return -E_INVAL;
@@ -574,6 +576,7 @@ sfs_io_nolock(struct sfs_fs *sfs, struct sfs_inode *sin, void *buf, off_t offset
         }
     }
 
+    // 统一读写
     int (*sfs_buf_op)(struct sfs_fs *sfs, void *buf, size_t len, uint32_t blkno, off_t offset);
     int (*sfs_block_op)(struct sfs_fs *sfs, void *buf, uint32_t blkno, uint32_t nblks);
     if (write) {
@@ -599,6 +602,49 @@ sfs_io_nolock(struct sfs_fs *sfs, struct sfs_inode *sin, void *buf, off_t offset
      * (3) If end position isn't aligned with the last block, Rd/Wr some content from begin to the (endpos % SFS_BLKSIZE) of the last block
 	 *       NOTICE: useful function: sfs_bmap_load_nolock, sfs_buf_op	
 	*/
+
+    // 读取开始未对齐部分
+    if((blkoff = offset % SFS_BLKSIZE) != 0) {
+    	// 计算未对齐部分大小
+    	size = (nblks != 0) ? (SFS_BLKSIZE - blkoff) : (endpos- offset);
+    	// 获得对应的磁盘块
+    	if((ret = sfs_bmap_load_nolock(sfs, sin, blkno, &ino)) != 0) {
+    		goto out;
+    	}
+    	// 开始对磁盘进行操作
+    	if((ret = sfs_buf_op(sfs, buf, size, ino, blkoff)) != 0) {
+    		goto out;
+    	}
+    	alen += size;
+    	if(nblks == 0) {
+    		goto out;
+    	}
+    	buf += size, blkno ++, nblks --;
+    }
+
+    // 开始整块读取
+    size = SFS_BLKSIZE;
+    while(nblks != 0) {
+    	if((ret = sfs_bmap_load_nolock(sfs, sin, blkno, &ino)) != 0) {
+    		goto out;
+    	}
+    	if((ret = sfs_block_op(sfs, buf, ino, 1)) != 0) {
+    		goto out;
+    	}
+    	alen += size, buf += size, blkno ++, nblks --;
+    }
+
+    // 处理结尾未对齐部分
+
+    if((size = endpos % SFS_BLKSIZE) != 0) {
+    	if((ret = sfs_bmap_load_nolock(sfs, sin, blkno, &ino)) != 0) {
+    		goto out;
+    	}
+    	if((ret = sfs_buf_op(sfs, buf, size, ino, 0)) != 0) {
+    	    goto out;
+    	 }
+    	alen += size;
+    }
 out:
     *alenp = alen;
     if (offset + alen > sin->din->size) {

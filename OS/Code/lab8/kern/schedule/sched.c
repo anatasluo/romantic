@@ -99,6 +99,7 @@ schedule(void) {
     local_intr_restore(intr_flag);
 }
 
+// add timer to timer_list
 void
 add_timer(timer_t *timer) {
     bool intr_flag;
