@@ -2,7 +2,7 @@
 
 自己动手实现计算机三大浪漫---操作系统，编译器，图形学 :anger:
 
-## 欢迎访问[个人博客](https://blog.luolongjun.com) :running:
+## 欢迎访问[个人博客](https://anatasluo.github.io/blog/) :running:
 
 --------------------------------------------
 
